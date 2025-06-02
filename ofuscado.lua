@@ -687,7 +687,7 @@ local selectedEggID = 1
 local autoBuyEggEnabled = false
 
 -- Dropdown para seleção do ovo
-v16.Shop:AddDropdown("AutoBuyEggDropdown", {
+v16.Main:AddDropdown("AutoBuyEggDropdown", {
     Title = "Selecionar Ovo",
     Description = "Escolha o ovo que deseja comprar",
     Values = table.keys(eggIDs),
@@ -700,7 +700,7 @@ v16.Shop:AddDropdown("AutoBuyEggDropdown", {
 })
 
 -- Toggle para ativar o Auto Buy
-v16.Shop:AddToggle("AutoBuyEggToggle", {
+v16.Main:AddToggle("AutoBuyEggToggle", {
     Title = "Ativar Auto Buy Egg",
     Default = false,
     Callback = function(state)
