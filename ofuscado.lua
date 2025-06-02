@@ -648,7 +648,7 @@ local selectedGear = gearList[1]
 local autoBuyEnabled = false
 
 -- Dropdown
-v16.Main:AddDropdown("AutoBuyGearDropdown", {
+v16.Shop:AddDropdown("AutoBuyGearDropdown", {
     Title = "Auto Buy Gear",
     Description = "Select Gear to buy",
     Values = gearList,
@@ -664,7 +664,7 @@ v16.Main:AddDropdown("AutoBuyGearDropdown", {
 })
 
 -- Toggle
-v16.Main:AddToggle("AutoBuyGearToggle", {
+v16.Shop:AddToggle("AutoBuyGearToggle", {
     Title = "Auto Buy Gear",
     Default = false,
     Callback = function(state)
