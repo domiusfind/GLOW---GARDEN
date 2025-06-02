@@ -777,8 +777,34 @@ function noFog()
 end
 v16.Shop:AddButton({
     Title = "No Fog",
-    Description = "",
+    Description = "is in error",
     Callback = function()
         noFog()
+    end
+})
+local antiAfkEnabled = true
+local vu = game:GetService("VirtualUser")
+
+-- Função anti-AFK ativada/desativada
+local function setupAntiAfk()
+    game:GetService("Players").LocalPlayer.Idled:Connect(function()
+        if antiAfkEnabled then
+            vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+            task.wait(1)
+            vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        end
+    end)
+end
+
+-- Já ativa ao carregar
+setupAntiAfk()
+
+-- Toggle visível na interface
+v16.Main:AddToggle("AntiAfkToggle", {
+    Title = "Anti-AFK",
+    Description = "",
+    Default = true,
+    Callback = function(state)
+        antiAfkEnabled = state
     end
 })
