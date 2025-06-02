@@ -676,41 +676,40 @@ v16.Shop:AddToggle("AutoBuyGearToggle", {
     end
     
 })
--- Mapeamento dos ovos com nomes e IDs corretos
+-- Tabela de nomes e seus IDs de ovos
 local eggIDs = {
     ["Buy Egg Comum"] = 1,
     ["Buy Egg Incomum"] = 2,
     ["Buy Egg Comum White"] = 3
 }
 
+-- Variáveis de controle
 local selectedEggID = 1
 local autoBuyEggEnabled = false
 
--- Dropdown para seleção do ovo
-v16.Main:AddDropdown("AutoBuyEggDropdown", {
+-- Dropdown de seleção do ovo
+Shop.v16:AddDropdown("AutoBuyEggDropdown", {
     Title = "Selecionar Ovo",
-    Description = "Escolha o ovo que deseja comprar",
-    Values = table.keys(eggIDs),
+    Values = {"Buy Egg Comum", "Buy Egg Incomum", "Buy Egg Comum White"},
     Multi = false,
     Default = 1,
     Callback = function(selectedName)
         selectedEggID = eggIDs[selectedName]
-        print("Ovo selecionado:", selectedName, "ID:", selectedEggID)
+        print("Selecionado:", selectedName, "→ ID:", selectedEggID)
     end
 })
 
--- Toggle para ativar o Auto Buy
-v16.Main:AddToggle("AutoBuyEggToggle", {
+-- Toggle para ativar compra automática
+Shop.v16:AddToggle("AutoBuyEggToggle", {
     Title = "Ativar Auto Buy Egg",
     Default = false,
     Callback = function(state)
         autoBuyEggEnabled = state
-        if autoBuyEggEnabled then
+        if state then
             task.spawn(function()
                 while autoBuyEggEnabled do
                     local args = { selectedEggID }
                     game:GetService("ReplicatedStorage").GameEvents.BuyPetEgg:FireServer(unpack(args))
-                    print("Auto comprando ovo:", selectedEggID)
                     task.wait(1)
                 end
             end)
