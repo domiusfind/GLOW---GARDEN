@@ -716,3 +716,26 @@ Shop.v16:AddToggle("AutoBuyEggToggle", {
         end
     end
 })
+-- Ícone flutuante para abrir/fechar a interface principal (v15)
+local CoreGui = game:GetService("CoreGui")
+
+local toggleGUI = Instance.new("ScreenGui")
+toggleGUI.Name = "AppleHubToggleButton"
+toggleGUI.ResetOnSpawn = false
+toggleGUI.IgnoreGuiInset = true
+toggleGUI.Parent = CoreGui
+
+local icon = Instance.new("ImageButton")
+icon.Name = "OpenCloseUI"
+icon.Size = UDim2.new(0, 45, 0, 45)
+icon.Position = UDim2.new(1, -55, 1, -55) -- canto inferior direito
+icon.BackgroundTransparency = 1
+icon.Image = "rbxassetid://6031225894" -- ícone padrão da engrenagem (troque se quiser)
+icon.Parent = toggleGUI
+
+-- Controla a visibilidade da UI
+local isVisible = true
+icon.MouseButton1Click:Connect(function()
+    isVisible = not isVisible
+    v15.Enabled = isVisible -- alterna a interface do Fluent (AppleHub)
+end)
