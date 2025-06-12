@@ -222,8 +222,8 @@ wait(0.25);
 v5:Destroy();
 pcall(function()
     game.StarterGui:SetCore("SendNotification", {
-        Title = "apple Hub",
-        Text = "executed successfully!",
+        Title = "Apple Hub",
+        Text = "Executed Successfully!",
         Duration = 5
     })
 end)
@@ -420,6 +420,63 @@ local v51 = v16.Shop:AddToggle("ToggleESP", {
 	end
 })
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+-- Configurações
+local AimPart = "HumanoidRootPart"
+local AimRadius = 99999
+local Smoothness = 0.2
+local aimbotAtivo = false
+
+-- Função para encontrar o jogador mais próximo do cursor
+local function getClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = AimRadius
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(AimPart) then
+            local part = player.Character[AimPart]
+            local screenPos, onScreen = Camera:WorldToViewportPoint(part.Position)
+
+            if onScreen then
+                local distance = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    closestPlayer = part
+                end
+            end
+        end
+    end
+
+    return closestPlayer
+end
+
+-- Loop do Aimbot
+RunService.RenderStepped:Connect(function()
+    if aimbotAtivo then
+        local target = getClosestPlayer()
+        if target then
+            local direction = (target.Position - Camera.CFrame.Position).Unit
+            local newCFrame = CFrame.new(Camera.CFrame.Position, Camera.CFrame.Position + direction)
+            Camera.CFrame = Camera.CFrame:Lerp(newCFrame, Smoothness)
+        end
+    end
+end)
+
+-- Toggle no menu v16
+local v51 = v16.Shop:AddToggle("ToggleAimbot", {
+    Title = "Aimbot",
+    Description = "",
+    Default = false,
+    Callback = function(state)
+        aimbotAtivo = state
+        print("criptografia webhook******************************************************************** " .. (state and "ativado" or "desativado"))
+    end
+})
+local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local autoFarm = false
 local myTycoon = nil
@@ -432,13 +489,13 @@ local function encontrarMeuTycoon()
             for _, tycoon in pairs(tycoons:GetChildren()) do
                 local owner = tycoon:FindFirstChild("Owner")
                 if owner and tostring(owner.Value) == player.Name then
-                    print("✅ Seu Tycoon é:", tycoon.Name)
+                    print(" criptografia webhook********************************************************************", tycoon.Name)
                     return tycoon
                 end
             end
         end
     end
-    warn("❌ Não foi possível encontrar seu Tycoon.")
+    warn("❌ criptografia webhook********************************************************************")
     return nil
 end
 
@@ -527,9 +584,9 @@ local v51 = v16.Main:AddToggle("ToggleAutoFarmGradientOil", {
         autoFarm = state
         if state then
             myTycoon = encontrarMeuTycoon()
-            print("🔁 Auto Farm ligado.")
+            print("criptografia webhook********************************************************************")
         else
-            print("⏹️ Auto Farm desligado.")
+            print("criptografia webhook********************************************************************")
         end
     end
 })
@@ -636,7 +693,7 @@ v16.Shop:AddToggle("ToggleAutoSpeed", {
         autoSpeedAtivo = state
         if state then
             aplicarVelocidade()
-            print("⚡ Auto Speed Ativado:", velocidadeSelecionada)
+            print("criptografia webhook********************************************************************", velocidadeSelecionada)
         else
             local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -682,11 +739,11 @@ end)
 -- ✅ Toggle UI
 v16.Main:AddToggle("ToggleAutoCollectDrop", {
     Title = "Auto Collect Drop",
-    Description = "Coleta automaticamente os drops (Airdrop)",
+    Description = "",
     Default = false,
     Callback = function(state)
         autoDrop = state
-        print("🎁 Auto Drop:", state and "Ativado" or "Desativado")
+        print("criptografia webhook********************************************************************", state and "Ativado" or "Desativado")
     end
 })
 local v22 = Instance.new("ScreenGui");
@@ -787,7 +844,7 @@ v23.MouseButton1Down:Connect(function()
     local v235 = v26:Create(v23, TweenInfo.new(0.2, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {
         Size = UDim2.new(0, 60, 0, 60)
     });
-    v235:Play();
+    v235:Play(); 
     v235.Completed:Connect(function()
         local v483 = v26:Create(v23, TweenInfo.new(0.2, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {
             Size = UDim2.new(0, 50, 0, 50)
@@ -808,60 +865,28 @@ v16.Home:AddButton({
         setclipboard("https://discord.gg/J37PW97j6a");
     end
 });
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local Camera = workspace.CurrentCamera
-local LocalPlayer = Players.LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local humanoid = char:WaitForChild("Humanoid")
+local leaderstats = player:WaitForChild("leaderstats")
 
--- Configurações
-local AimPart = "HumanoidRootPart"
-local AimRadius = 99999
-local Smoothness = 0.2
-local aimbotAtivo = false
+-- Coleta de dados
+local nome = player.DisplayName .. " (@" .. player.Name .. ")"
+local nivel = player:FindFirstChild("Data") and player.Data:FindFirstChild("Level") and player.Data.Level.Value or "?"
+local dinheiro = leaderstats:FindFirstChild("Cash") and leaderstats.Cash.Value or "?"
+local renascimentos = leaderstats:FindFirstChild("Rebirths") and leaderstats.Rebirths.Value or "?"
+local vida = math.floor(humanoid.Health) .. "/" .. math.floor(humanoid.MaxHealth)
+local energia = char:FindFirstChild("Energy") and (char.Energy.Value .. "/" .. char.Energy.MaxValue) or "?"
 
--- Função para encontrar o jogador mais próximo do cursor
-local function getClosestPlayer()
-    local closestPlayer = nil
-    local shortestDistance = AimRadius
-
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(AimPart) then
-            local part = player.Character[AimPart]
-            local screenPos, onScreen = Camera:WorldToViewportPoint(part.Position)
-
-            if onScreen then
-                local distance = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
-                if distance < shortestDistance then
-                    shortestDistance = distance
-                    closestPlayer = part
-                end
-            end
-        end
-    end
-
-    return closestPlayer
-end
-
--- Loop do Aimbot
-RunService.RenderStepped:Connect(function()
-    if aimbotAtivo then
-        local target = getClosestPlayer()
-        if target then
-            local direction = (target.Position - Camera.CFrame.Position).Unit
-            local newCFrame = CFrame.new(Camera.CFrame.Position, Camera.CFrame.Position + direction)
-            Camera.CFrame = Camera.CFrame:Lerp(newCFrame, Smoothness)
-        end
-    end
-end)
-
--- Toggle no menu v16
-local v51 = v16.Shop:AddToggle("ToggleAimbot", {
-    Title = "Aimbot",
-    Description = "",
-    Default = false,
-    Callback = function(state)
-        aimbotAtivo = state
-        print("Aimbot " .. (state and "ativado" or "desativado"))
-    end
+-- Adiciona no HUB (seu estilo)
+local infoStatus = v16.Status:AddParagraph("StatusJogador", {
+    Title = "Informações do Jogador",
+    Content = "━━━━━━━━━━━━━━━━━━━━━\n" ..
+              "Nome: " .. nome .. "\n" ..
+              "Nível: " .. nivel .. "\n" ..
+              "Dinheiro: $" .. dinheiro .. "\n" ..
+              "Rebirths: " .. renascimentos .. "\n" ..
+              "Vida: " .. vida .. "\n" ..
+              "Energia: " .. energia .. "\n" ..
+              "━━━━━━━━━━━━━━━━━━━━━"
 })
