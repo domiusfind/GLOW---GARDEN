@@ -317,8 +317,8 @@ end)
 -- end);
 local v14 = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))();
 local v15 = v14:CreateWindow({
-    Title = "Apple hub Magnata da guerra ( 🪖)",
-    SubTitle = "",
+    Title = "Apple hub (🍎)",
+    SubTitle = "By mini hell",
     TabWidth = 160,
     Theme = "Dark",
     Acrylic = false,
@@ -333,9 +333,92 @@ local v16 = {
         Title = "Farm"
     }),
     Shop = v15:AddTab({
-        Title = "Shop"
+        Title = "Pvp"
     })
 };
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local ESPPlayer = false
+local UniqueID = math.random(1, 999999)
+
+local function round(n)
+	return math.floor(tonumber(n) + 0.5)
+end
+
+local function UpdatePlayerESP()
+	for _, player in pairs(Players:GetPlayers()) do
+		if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+			local head = player.Character.Head
+			local tagName = "NameEsp" .. UniqueID
+
+			if ESPPlayer then
+				if not head:FindFirstChild(tagName) then
+					local bill = Instance.new("BillboardGui")
+					bill.Name = tagName
+					bill.Adornee = head
+					bill.AlwaysOnTop = true
+					bill.Size = UDim2.new(1, 200, 1, 30)
+					bill.ExtentsOffset = Vector3.new(0, 2, 0)
+					bill.Parent = head
+
+					local text = Instance.new("TextLabel", bill)
+					text.BackgroundTransparency = 1
+					text.Size = UDim2.new(1, 0, 1, 0)
+					text.Font = Enum.Font.GothamBold
+					text.TextSize = 14
+					text.TextColor3 = (player.Team == LocalPlayer.Team) and Color3.new(0, 1, 0) or Color3.new(1, 0, 0)
+					text.TextStrokeTransparency = 0.5
+					text.TextYAlignment = Enum.TextYAlignment.Top
+					text.TextWrapped = true
+				end
+
+				local label = head:FindFirstChild(tagName)
+				if label and label:IsA("BillboardGui") and label:FindFirstChildOfClass("TextLabel") then
+					local distance = (LocalPlayer.Character.Head.Position - head.Position).Magnitude / 3
+					local health = 0
+					local max = 100
+					if player.Character:FindFirstChild("Humanoid") then
+						local h = player.Character.Humanoid
+						health = round(h.Health)
+						max = round(h.MaxHealth)
+					end
+
+					label.TextLabel.Text = player.Name ..
+						" | " .. round(distance) .. "m\n" ..
+						"Vida: " .. health .. "/" .. max
+				end
+			else
+				local existing = head:FindFirstChild(tagName)
+				if existing then existing:Destroy() end
+			end
+		end
+	end
+end
+
+-- Loop de atualização
+RunService.RenderStepped:Connect(function()
+	pcall(UpdatePlayerESP)
+end)
+
+-- Toggle no menu v16
+local v51 = v16.Shop:AddToggle("ToggleESP", {
+	Title = "Esp Player",
+	Description = "",
+	Default = false,
+	Callback = function(state)
+		ESPPlayer = state
+		if not state then
+			-- Limpa ESPs ao desativar
+			for _, player in pairs(Players:GetPlayers()) do
+				if player.Character and player.Character:FindFirstChild("Head") then
+					local gui = player.Character.Head:FindFirstChild("NameEsp" .. UniqueID)
+					if gui then gui:Destroy() end
+				end
+			end
+		end
+	end
+})
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local autoFarm = false
@@ -718,3 +801,67 @@ end
 if game:GetService("ReplicatedStorage").Effect.Container:FindFirstChild("Respawn") then
     game:GetsService("ReplicatedStorage").Effect.Container.Respawn:Destroy();
 end
+v16.Home:AddButton({
+    Title = "Discord",
+    Description = "click for link",
+    Callback = function()
+        setclipboard("https://discord.gg/J37PW97j6a");
+    end
+});
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+-- Configurações
+local AimPart = "HumanoidRootPart"
+local AimRadius = 99999
+local Smoothness = 0.2
+local aimbotAtivo = false
+
+-- Função para encontrar o jogador mais próximo do cursor
+local function getClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = AimRadius
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(AimPart) then
+            local part = player.Character[AimPart]
+            local screenPos, onScreen = Camera:WorldToViewportPoint(part.Position)
+
+            if onScreen then
+                local distance = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    closestPlayer = part
+                end
+            end
+        end
+    end
+
+    return closestPlayer
+end
+
+-- Loop do Aimbot
+RunService.RenderStepped:Connect(function()
+    if aimbotAtivo then
+        local target = getClosestPlayer()
+        if target then
+            local direction = (target.Position - Camera.CFrame.Position).Unit
+            local newCFrame = CFrame.new(Camera.CFrame.Position, Camera.CFrame.Position + direction)
+            Camera.CFrame = Camera.CFrame:Lerp(newCFrame, Smoothness)
+        end
+    end
+end)
+
+-- Toggle no menu v16
+local v51 = v16.Shop:AddToggle("ToggleAimbot", {
+    Title = "Aimbot",
+    Description = "",
+    Default = false,
+    Callback = function(state)
+        aimbotAtivo = state
+        print("Aimbot " .. (state and "ativado" or "desativado"))
+    end
+})
