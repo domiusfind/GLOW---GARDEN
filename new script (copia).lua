@@ -879,7 +879,7 @@ local vida = math.floor(humanoid.Health) .. "/" .. math.floor(humanoid.MaxHealth
 local energia = char:FindFirstChild("Energy") and (char.Energy.Value .. "/" .. char.Energy.MaxValue) or "?"
 
 -- Adiciona no HUB (seu estilo)
-local infoStatus = v16.Status:AddParagraph("StatusJogador", {
+v16.Homem:AddParagraph("StatusJogador", {
     Title = "Informações do Jogador",
     Content = "━━━━━━━━━━━━━━━━━━━━━\n" ..
               "Nome: " .. nome .. "\n" ..
