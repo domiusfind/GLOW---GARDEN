@@ -935,7 +935,7 @@ v16.Main:AddToggle("AntiAfkToggle", {
         antiAfkEnabled = state
     end
 })
-local v51 = v16.Main:AddSection("Delet Plant:");
+local v51 = v16.Main:AddSection("Delet Fruit:"); -- sessão 2 shop
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -952,7 +952,7 @@ local fruits = {
 
 -- Dropdowns
 v16.Main:AddDropdown("DropdownDeleteFruit", {
-    Title = "Select fruit to delete",
+    Title = "Select Fruit Delet",
     Description = "",
     Values = fruits,
     Callback = function(v)
@@ -961,7 +961,7 @@ v16.Main:AddDropdown("DropdownDeleteFruit", {
 })
 
 v16.Main:AddDropdown("DropdownDeleteMode", {
-    Title = "Delete Mode",
+    Title = "Modo de deleção",
     Description = "VISUAL Or PERMANENT",
     Values = { "VISUAL", "PERMANENT" },
     Callback = function(v)
@@ -969,23 +969,24 @@ v16.Main:AddDropdown("DropdownDeleteMode", {
     end
 })
 
--- Equipar pá
+-- Força o equipamento da pá
 local function equipShovel()
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return false end
 
-    -- Verifica se já está equipada
+    -- Já equipada?
     for _, tool in pairs(character:GetChildren()) do
         if tool:IsA("Tool") and tool.Name == "Shovel [Destroy Plants]" then
             return true
         end
     end
 
-    -- Tenta equipar da Backpack
+    -- Tenta da mochila
     local shovel = player.Backpack:FindFirstChild("Shovel [Destroy Plants]")
-    if shovel and humanoid then
+    if shovel then
         humanoid:EquipTool(shovel)
-        task.wait(0.2) -- pequeno delay pra garantir
+        task.wait(0.25)
         return true
     end
 
@@ -1016,28 +1017,33 @@ v16.Main:AddToggle("ToggleAutoDeletePlant", {
 
                 while autoDelete do
                     local minhaFazenda = getMinhaFazenda()
-                    if not minhaFazenda then warn("Fazenda não encontrada") return end
+                    if not minhaFazenda then
+                        warn("Fazenda não encontrada.")
+                        return
+                    end
 
                     local plantsFolder = minhaFazenda:FindFirstChild("Important"):FindFirstChild("Plants_Physical")
-                    if not plantsFolder then warn("Plants_Physical não encontrada") return end
+                    if not plantsFolder then
+                        warn("Plants_Physical não encontrada.")
+                        return
+                    end
 
                     local frutaPasta = plantsFolder:FindFirstChild(selectedFruit)
                     if frutaPasta then
                         for _, planta in pairs(frutaPasta:GetChildren()) do
                             if selectedMode == "VISUAL" then
                                 planta:Destroy()
+
                             elseif selectedMode == "PERMANENTE" then
-                                -- Equipar pá antes de deletar
                                 if equipShovel() then
                                     ReplicatedStorage.GameEvents.Remove_Item:FireServer(planta)
+                                    task.wait(0.2) -- delayzinho pra não bugar
                                 else
-                                    warn("Pá não equipada, não foi possível deletar.")
+                                    warn("Pá não encontrada ou não equipada.")
                                 end
                             end
                             task.wait(0.1)
                         end
-                    else
-                        warn("Fruta '" .. selectedFruit .. "' não encontrada na sua fazenda.")
                     end
 
                     task.wait(1)
