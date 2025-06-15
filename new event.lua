@@ -951,7 +951,7 @@ local fruits = {
 }
 
 -- Dropdowns
-v16.Main:AddDropdown("DropdownDeleteFruit", {
+local v51 = v16.Main:AddDropdown("DropdownDeleteFruit", {
     Title = "Select Fruit To Delete",
     Description = "",
     Values = fruits,
@@ -960,7 +960,7 @@ v16.Main:AddDropdown("DropdownDeleteFruit", {
     end
 })
 
-v16.Main:AddDropdown("DropdownDeleteMode", {
+local v51 = v16.Main:AddDropdown("DropdownDeleteMode", {
     Title = "Select Delete Mode",
     Description = "",
     Values = { "VISUAL", "PERMANENT" },
@@ -993,7 +993,7 @@ local function equipShovel()
 end
 
 -- Toggle principal
-v16.Main:AddToggle("ToggleAutoDeletePlant", {
+local v51 = v16.Main:AddToggle("ToggleAutoDeletePlant", {
     Title = "Auto Delete Plant",
     Default = false,
     Callback = function(state)
