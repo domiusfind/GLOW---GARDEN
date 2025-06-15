@@ -336,11 +336,11 @@ local v16 = {
         Title = "Event"
     })
 };
-local v51 = v16.Main:AddSection("[ 🍯🐝] bee Crafters"); -- sessão 2 shop
+local v51 = v16.Main:AddSection("[ 🍯🐝] bee Crafters:"); -- sessão 2 shop
 local selectedCrafterItem = "Tropical Mist Sprinkler"
 local autoBuyCrafter = false
 
--- Dropdown para selecionar o item de crafting (crafter)
+-- Dropdown para selecionar o item de crafting
 local v51 = v16.Main:AddDropdown("DropdownSelectCrafter", {
     Title = "Select Crafter",
     Description = "Escolha o item para craftar",
@@ -361,18 +361,30 @@ local v51 = v16.Main:AddDropdown("DropdownSelectCrafter", {
     Default = "Tropical Mist Sprinkler",
     Callback = function(selected)
         selectedCrafterItem = selected
-        print("Item de crafting selecionado:", selectedCrafterItem)
+        print("Webhook *******", selectedCrafterItem)
     end
 })
 
--- Toggle para ativar/desativar Auto Craft dos crafters
+-- Toggle para Auto Buy Crafter com teleporte ao ativar
 local v51 = v16.Main:AddToggle("ToggleAutoBuyCrafter", {
     Title = "Auto Buy Crafter",
-    Description = "Ativa o auto crafting do item selecionado",
+    Description = "",
     Default = false,
     Callback = function(state)
         autoBuyCrafter = state
         if autoBuyCrafter then
+            -- 🟡 Teleporta o jogador para o Promty (Bancada de Crafting)
+            local player = game.Players.LocalPlayer
+            local char = player.Character or player.CharacterAdded:Wait()
+            local hrp = char:WaitForChild("HumanoidRootPart")
+
+            -- Substitua aqui se precisar com o CFrame exato:
+            local promtyPart = workspace:FindFirstChild("CraftingBench") or workspace:FindFirstChild("Promty") -- substitua pelo nome correto
+            if promtyPart then
+                hrp.CFrame = promtyPart.CFrame + Vector3.new(0, 5, 0)
+            end
+
+            -- 🧪 Começa o loop de auto crafting
             task.spawn(function()
                 while autoBuyCrafter do
                     if selectedCrafterItem and selectedCrafterItem ~= "" then
@@ -385,7 +397,7 @@ local v51 = v16.Main:AddToggle("ToggleAutoBuyCrafter", {
 
                         game:GetService("ReplicatedStorage").GameEvents.CraftingGlobalObjectService:FireServer(unpack(args))
                     end
-                    task.wait(0.5) -- delay entre cada tentativa de crafting
+                    task.wait(0.5)
                 end
             end)
         end
@@ -398,6 +410,7 @@ v16.Home:AddButton({
         setclipboard("https://discord.gg/teste");
     end
 });
+local v51 = v16.Main:AddSection("[🍅🍓] Farming:"); -- sessão 2 shop
 -- DROPDOWN SELECIONAR SEMENTES 
 local selectedSeed = "Carrot"
 local autoBuy = false
