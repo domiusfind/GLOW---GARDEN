@@ -935,7 +935,7 @@ v16.Main:AddToggle("AntiAfkToggle", {
         antiAfkEnabled = state
     end
 })
-local v51 = v16.Main:AddSection("[Delet Plant]
+local v51 = v16.Main:AddSection("[Delet Plant]");
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
