@@ -832,6 +832,19 @@ v16.Shop:AddDropdown("AutoBuyGearDropdown", {
         end
     end
 })
+-- Toggle
+v16.Shop:AddToggle("AutoBuyGearToggle", {
+    Title = "Auto Buy Gear",
+    Default = false,
+    Callback = function(state)
+        autoBuyEnabled = state
+        if autoBuyEnabled and selectedGear then
+            game:GetService("ReplicatedStorage").GameEvents.BuyGearStock:FireServer(selectedGear)
+            print("Auto Buy ativado para:", selectedGear)
+        end
+    end
+    
+})
 local v51 = v16.Main:AddSection("[Delet Plant]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -943,20 +956,6 @@ v16.Main:AddToggle("ToggleAutoDeletePlant", {
         end
     end
 })
--- Toggle
-v16.Shop:AddToggle("AutoBuyGearToggle", {
-    Title = "Auto Buy Gear",
-    Default = false,
-    Callback = function(state)
-        autoBuyEnabled = state
-        if autoBuyEnabled and selectedGear then
-            game:GetService("ReplicatedStorage").GameEvents.BuyGearStock:FireServer(selectedGear)
-            print("Auto Buy ativado para:", selectedGear)
-        end
-    end
-    
-})
-
 local v56 = v16.Shop:AddSection("Others"); -- sessão 2 shop
 function FPSBooster()
     local decalsyeeted = true
