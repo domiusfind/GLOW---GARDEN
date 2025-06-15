@@ -935,7 +935,7 @@ v16.Main:AddToggle("AntiAfkToggle", {
         antiAfkEnabled = state
     end
 })
-local v51 = v16.Main:AddSection("[Delet Plant]");
+local v51 = v16.Main:AddSection("Delet Plant:");
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -951,8 +951,8 @@ local fruits = {
 }
 
 -- Dropdowns
-local v51 = v16.Main:AddDropdown("DropdownDeleteFruit", {
-    Title = "Select Fruit To Delete",
+v16.Main:AddDropdown("DropdownDeleteFruit", {
+    Title = "Select fruit to delete",
     Description = "",
     Values = fruits,
     Callback = function(v)
@@ -960,9 +960,9 @@ local v51 = v16.Main:AddDropdown("DropdownDeleteFruit", {
     end
 })
 
-local v51 = v16.Main:AddDropdown("DropdownDeleteMode", {
-    Title = "Select Delete Mode",
-    Description = "",
+v16.Main:AddDropdown("DropdownDeleteMode", {
+    Title = "Delete Mode",
+    Description = "VISUAL Or PERMANENT",
     Values = { "VISUAL", "PERMANENT" },
     Callback = function(v)
         selectedMode = v
@@ -993,7 +993,7 @@ local function equipShovel()
 end
 
 -- Toggle principal
-local v51 = v16.Main:AddToggle("ToggleAutoDeletePlant", {
+v16.Main:AddToggle("ToggleAutoDeletePlant", {
     Title = "Auto Delete Plant",
     Default = false,
     Callback = function(state)
