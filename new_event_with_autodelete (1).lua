@@ -367,7 +367,7 @@ local v51 = v16.Main:AddDropdown("DropdownSelectCrafter", {
 
 -- Toggle para Auto Buy Crafter com teleporte ao ativar
 local v51 = v16.Main:AddToggle("ToggleAutoBuyCrafter", {
-    Title = "Auto Buy Crafter",
+    Title = "Auto Crafter",
     Description = "",
     Default = false,
     Callback = function(state)
@@ -421,26 +421,58 @@ local v48 = v16.Main:AddDropdown("DropdownSelectSeed", {
     Description = "",
     Values = {
         "Carrot",
-        "Tomato",
-        "Poatato",
         "Strawberry",
-        "Blueberry",
-        "Orange",
-        "Corn",
+        "Blueberry"
+        "Orange Tulip",
+        "Tomato",
         "Daffodil",
+        "Corn",
         "Watermelon",
         "Pumpkin",
         "Apple",
         "Bamboo",
         "Coconut",
         "Cactus",
-        "Dragon",
+        "Dragon Fruit",
         "Mango",
         "Grape",
         "Mushroom",
         "Pepper",
         "Cacao",
-        "Beanstalk" 
+        "Beanstalk",
+        "Ember Lily",
+        "Sugar Apple",
+        "Lemon",
+        "Pineapple",
+        "Peach",
+        "Raspberry",
+        "Pear",
+        "Nightshade",
+        "Mint",
+        "Moonflower",
+        "Starfruit",
+        "Glowshroom",
+        "Moonglow",
+        "Moon Blossom",
+        "Crocus",
+        "Rose",
+        "Manuka flower",
+        "Lavender",
+        "Bee balm",
+        "Dandelion",
+        "Foxglove",
+        "Nectarshade",
+        "Succulent",
+        "Lilac",
+        "Lumira",
+        "Nectarine",
+        "Nectar Thorn",
+        "Violet corn",
+        "Bendboo",
+        "Cocovine",
+        "Hive fruit",
+        "Sunflower",
+        "Dragon pepper"
     },
     Multi = false,
     Default = 1,
@@ -940,9 +972,9 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
 
-local autoDeletePlant = false
-local selectedFruitDelete = nil
-local selectedDeleteMode = nil
+local autoDelete = false
+local selectedFruit = nil
+local selectedMode = nil
 
 local fruits = {
     "Carrot", "Tomato", "Poatato", "Strawberry", "Blueberry", "Orange", "Corn", "Daffodil",
@@ -956,31 +988,33 @@ v16.Main:AddDropdown("DropdownDeleteFruit", {
     Description = "",
     Values = fruits,
     Callback = function(v)
-        selectedFruitDelete = v
+        selectedFruit = v
     end
 })
 
 v16.Main:AddDropdown("DropdownDeleteMode", {
     Title = "Modo de deleção",
-    Description = "",
+    Description = "VISUAL Or PERMANENT",
     Values = { "VISUAL", "PERMANENT" },
     Callback = function(v)
-        selectedDeleteMode = v
+        selectedMode = v
     end
 })
 
--- Equipar a pá
+-- Força o equipamento da pá
 local function equipShovel()
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:FindFirstChildOfClass("Humanoid")
     if not humanoid then return false end
 
+    -- Já equipada?
     for _, tool in pairs(character:GetChildren()) do
         if tool:IsA("Tool") and tool.Name == "Shovel [Destroy Plants]" then
             return true
         end
     end
 
+    -- Tenta da mochila
     local shovel = player.Backpack:FindFirstChild("Shovel [Destroy Plants]")
     if shovel then
         humanoid:EquipTool(shovel)
@@ -996,14 +1030,9 @@ v16.Main:AddToggle("ToggleAutoDeletePlant", {
     Title = "Auto Delete Plant",
     Default = false,
     Callback = function(state)
-        autoDeletePlant = state
+        autoDelete = state
 
-        if not selectedFruitDelete or not selectedDeleteMode then
-            warn("Selecione uma fruta e o modo de deleção antes de ativar.")
-            return
-        end
-
-        if state then
+        if state and selectedFruit and selectedMode then
             task.spawn(function()
                 local function getMinhaFazenda()
                     for _, fazenda in pairs(workspace.Farm:GetChildren()) do
@@ -1018,28 +1047,29 @@ v16.Main:AddToggle("ToggleAutoDeletePlant", {
                     return nil
                 end
 
-                while autoDeletePlant do
+                while autoDelete do
                     local minhaFazenda = getMinhaFazenda()
                     if not minhaFazenda then
                         warn("Fazenda não encontrada.")
-                        break
+                        return
                     end
 
                     local plantsFolder = minhaFazenda:FindFirstChild("Important"):FindFirstChild("Plants_Physical")
                     if not plantsFolder then
                         warn("Plants_Physical não encontrada.")
-                        break
+                        return
                     end
 
-                    local frutaPasta = plantsFolder:FindFirstChild(selectedFruitDelete)
+                    local frutaPasta = plantsFolder:FindFirstChild(selectedFruit)
                     if frutaPasta then
                         for _, planta in pairs(frutaPasta:GetChildren()) do
-                            if selectedDeleteMode == "VISUAL" then
+                            if selectedMode == "VISUAL" then
                                 planta:Destroy()
-                            elseif selectedDeleteMode == "PERMANENT" then
+
+                            elseif selectedMode == "PERMANENTE" then
                                 if equipShovel() then
                                     ReplicatedStorage.GameEvents.Remove_Item:FireServer(planta)
-                                    task.wait(0.2)
+                                    task.wait(0.2) -- delayzinho pra não bugar
                                 else
                                     warn("Pá não encontrada ou não equipada.")
                                 end
@@ -1166,3 +1196,116 @@ end
 if game:GetService("ReplicatedStorage").Effect.Container:FindFirstChild("Respawn") then
     game:GetsService("ReplicatedStorage").Effect.Container.Respawn:Destroy();
 end
+
+-- [[ AUTO DELETE PLANT SYSTEM ]] --
+
+
+-- 🧠 Auto Delete Plant System
+local player = game:GetService("Players").LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local selectedDeleteFruit = nil
+local selectedDeleteMode = nil
+local autoDeleteEnabled = false
+
+-- Lista das frutas
+local frutas = {
+    "Carrot Seed", "Tomato Seed", "Poatato Seed", "Strawberry Seed", "Blueberry Seed",
+    "Orange Seed", "Corn Seed", "Daffodil Seed", "Watermelon Seed", "Pumpkin Seed",
+    "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed", "Dragon Seed",
+    "Mango Seed", "Grape Seed", "Mushroom Seed", "Pepper Seed", "Cacao Seed", "Beanstalk Seed"
+}
+
+-- Dropdown de Frutas
+local v51 = v16.Main:AddDropdown("DropdownFrutas", {
+    Title = "Fruta para deletar",
+    Values = frutas,
+    Multi = false,
+    Default = frutas[1],
+    Callback = function(value)
+        selectedDeleteFruit = value
+    end
+})
+
+-- Dropdown de Modo de Deletar
+local v51 = v16.Main:AddDropdown("DropdownModoDelete", {
+    Title = "Modo de deletar",
+    Values = { "Visualmente", "Permanentemente" },
+    Multi = false,
+    Default = "Visualmente",
+    Callback = function(value)
+        selectedDeleteMode = value
+    end
+})
+
+-- Toggle para ativar auto delete
+local v51 = v16.Main:AddToggle("ToggleAutoDeletePlant", {
+    Title = "Auto Delete Plant",
+    Description = "Deleta automaticamente plantas da fruta escolhida",
+    Default = false,
+    Callback = function(state)
+        autoDeleteEnabled = state
+    end
+})
+
+-- Função que retorna a fazenda do jogador
+local function getMinhaFazenda()
+    for _, fazenda in pairs(workspace.Farm:GetChildren()) do
+        local important = fazenda:FindFirstChild("Important")
+        local data = important and important:FindFirstChild("Data")
+        local owner = data and data:FindFirstChild("Owner")
+        if owner and owner.Value == player.Name then
+            return fazenda
+        end
+    end
+    return nil
+end
+
+-- Equipar a pá caso seja necessário
+local function equipShovel()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local toolName = "Shovel [Destroy Plants]"
+
+    for _, tool in pairs(char:GetChildren()) do
+        if tool:IsA("Tool") and tool.Name == toolName then
+            return true
+        end
+    end
+
+    for _, tool in pairs(player.Backpack:GetChildren()) do
+        if tool:IsA("Tool") and tool.Name == toolName then
+            humanoid:EquipTool(tool)
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Loop de verificação
+task.spawn(function()
+    while true do
+        if autoDeleteEnabled and selectedDeleteFruit and selectedDeleteMode then
+            local fazenda = getMinhaFazenda()
+            if fazenda then
+                local plantsFolder = fazenda:FindFirstChild("Important") and fazenda.Important:FindFirstChild("Plants_Physical")
+                if plantsFolder then
+                    for _, planta in pairs(plantsFolder:GetChildren()) do
+                        if planta.Name == selectedDeleteFruit then
+                            for _, instancia in pairs(planta:GetChildren()) do
+                                if selectedDeleteMode == "Visualmente" then
+                                    instancia:Destroy()
+                                elseif selectedDeleteMode == "Permanentemente" then
+                                    if equipShovel() then
+                                        ReplicatedStorage.GameEvents.Remove_Item:FireServer(instancia)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        task.wait(1)
+    end
+end)
